@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>在线制图工具-制图</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <script src="../js/jquery-2.1.4.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/examples.css">
+    <!--[if lt IE 9]>
+        <script src="../js/html5shiv.min.js"></script>
+        <script src="https://cdn.bootcss.com/canvasjs/1.7.0/excanvas.js"></script>
+    <![end if]-->
+    
+
+    <style>
+        body {
+            background: #eee;
+        }
+
+        .icon_box_main {
+            background: #fff;
+            border-bottom: 1px solid #cccccc;
+        }
+
+        .nav_title {
+            display: inline-block;
+            padding: 5px;
+            width: 64%;
+            height: 100%;
+            vertical-align: middle;
+            color: rgb(216, 26, 96);
+            font-size: 25px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 7px;
+        }
+
+        .model_list_box {
+            width: 100%;
+            height: auto;
+            padding: 5px;
+            background: #fff;
+            border-bottom: 1px solid #cccccc;
+        }
+
+        .model_list_box ul {
+            overflow: hidden;
+        }
+
+        .model_list_box ul li {
+            float: left;
+            width: auto;
+            text-align: center;
+            margin: 2px 5px;
+        }
+
+        .btn {
+            outline: none !important;
+        }
+
+        .options .btn {
+            border: 1px solid #cccccc;
+            background: #fff;
+        }
+
+        .options .btn:hover {
+            border: 1px solid rgb(216, 26, 96);
+            background: rgb(216, 26, 96);
+            color: #fff;
+            transition: all 0.5s;
+        }
+
+        .options .btn.active {
+            border: 1px solid rgb(216, 26, 96);
+            background: rgb(216, 26, 96);
+            color: #fff;
+        }
+
+        #color_toggle {
+            position: relative;
+        }
+
+        #color_toggle input {
+            position: absolute;
+            margin: 0;
+            width: 100%;
+            top: -5px;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .model_list_box .pull-right .btn:focus {
+            border: 1px solid transparent;
+        }
+
+        #main {
+            width: auto;
+            height: auto;
+            margin: 0 auto;
+            box-sizing: content-box;
+            padding: 50px;
+        }
+
+        #main .canvas_box {
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+        }
+
+        #main .canvas_box #canvas_router {
+            border-radius: 5px;
+            overflow: hidden;
+            box-sizing: content-box;
+            background: rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+
+        #main .canvas_box #canvas_router #canvas_text {
+            width: auto;
+            height: auto;
+            border: 1px solid #ccc;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            cursor: move;
+            transform: translate(-50%, -50%);
+            padding: 10px 50px;
+            font-size: 14px;
+            color: #000;
+            font-weight: 600;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        #main .canvas_box #canvas_router #canvas_text:hover {
+            border: 1px solid #000;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        #main .canvas_box #canvas_router #canvas_tailoring {
+            width: 35%;
+            height: 35%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9;
+            background: transparent;
+            border: 1px solid #000;
+            cursor: move;
+            filter: invert();
+        }
+
+        #main .canvas_box #canvas_router ul li:nth-of-type(1) {
+            bottom: -5px;
+            left: -5px;
+            cursor: sw-resize;
+        }
+
+        #main .canvas_box #canvas_router ul li:nth-of-type(2) {
+            top: -5px;
+            left: -5px;
+            cursor: nw-resize;
+        }
+
+        #main .canvas_box #canvas_router ul li:nth-of-type(3) {
+            bottom: -5px;
+            right: -5px;
+            cursor: se-resize;
+        }
+
+        #main .canvas_box #canvas_router ul li:nth-of-type(4) {
+            top: -5px;
+            right: -5px;
+            cursor: ne-resize;
+        }
+
+        .plus_options {
+            position: fixed;
+            left: 0.5%;
+            bottom: 1%;
+            background: #fff;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .plus_options .show_narrows {
+            position: absolute;
+            top: -34px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            box-shadow: 0px 0px 5px rgb(255, 255, 255);
+            padding: 5px 8px;
+            border-radius: 5px;
+            color: rgba(0, 0, 0, 0.6);
+            display: none;
+        }
+
+        .plus_options ul,
+        .picture_options ul {
+            overflow: hidden;
+        }
+
+        .plus_options li,
+        .picture_options li {
+            float: left;
+            padding: 2px;
+        }
+
+        .plus_options li .btn,
+        .picture_options li .btn {
+            background: transparent;
+        }
+
+        .plus_options li:hover button {
+            color: rgb(216, 26, 96);
+            transition: all 0.2s;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            /*去除默认样式*/
+            background-color: #ebeff4;
+            width: 100% !important;
+            -webkit-appearance: none;
+            height: 4px;
+            padding: 0;
+            border: none;
+            margin: 13px 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            /*去除默认样式*/
+            cursor: default;
+            top: 50%;
+            height: 10px;
+            width: 10px;
+            transform: translateY(0%);
+            background: #fff;
+            border-radius: 15px;
+            border: 5px solid rgb(216, 26, 96);
+            cursor: pointer;
+        }
+
+        .plus_options_modal {
+            position: absolute;
+            right: -45px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 7px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+            font-weight: 100;
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .picture_options {
+            position: fixed;
+            width: auto;
+            height: 33.6px;
+            right: 1% !important;
+            top: 17%;
+            background: #fff;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .picture_options ul li:first-of-type {
+            border-radius: 5px 0px 0px 5px;
+        }
+
+        .picture_options ul li:last-of-type {
+            border-radius: 0px 5px 5px 0px;
+        }
+
+        .picture_options ul li:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .basis_options,
+        .font_options,
+        .paint_options,
+        .Rubber_options,
+        .clip_options {
+            width: 250px;
+            height: auto;
+            background: #fff;
+            border-radius: 5px;
+            margin-top: 5px;
+            margin-left: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            top: 120px;
+            left: 10px;
+        }
+
+        .basis_options ul li {
+            width: auto;
+            height: auto;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .basis_options ul li:last-of-type {
+            border-bottom: none;
+        }
+
+        .basis_options ul li.active {
+            height: 100%;
+            transition: all 0.3s;
+        }
+
+        .basis_options ul li:first-of-type header {
+            border-radius: 5px 5px 0px 0px;
+        }
+
+        .basis_options header:hover {
+            background: #eee;
+        }
+
+        .basis_options header a {
+            padding: 10px;
+            color: rgba(0, 0, 0, 0.7);
+            text-align: center;
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+        }
+
+        .basis_options ul li:last-of-type .options_list .basis_options_size {
+            display: inline-block;
+            width: 100%;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+            height: 20px;
+            margin: 0;
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 14px;
+            padding: 2px 4px;
+            line-height: 20px;
+            text-align: center;
+            font-weight: 100;
+            font-family: monospace;
+        }
+
+        .basis_options header,
+        .font_options header,
+        .paint_options header,
+        .Rubber_options header,
+        .clip_options header {
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid #ccc !important;
+        }
+
+        .basis_options header .toggle_icon,
+        .font_options header .toggle_icon,
+        .paint_options header .toggle_icon,
+        .Rubber_options header .toggle_icon,
+        .clip_options .toggle_icon {
+            display: inline-block;
+            width: auto;
+            height: 100%;
+            padding: 5px;
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .basis_options .options_list,
+        .font_options .options_list,
+        .paint_options .options_list,
+        .Rubber_options .options_list,
+        .clip_options .options_list {
+            padding: 5px 30px;
+        }
+
+        .basis_options .options_list .options_list_title,
+        .font_options .options_list .options_list_title,
+        .paint_options .options_list .options_list_title,
+        .Rubber_options .options_list .options_list_title,
+        .clip_options .options_list .options_list_title {
+            overflow: hidden;
+            padding: 0 5px;
+        }
+
+        .basis_options .options_list .options_list_title span,
+        .font_options .options_list .options_list_title span,
+        .paint_options .options_list .options_list_title span,
+        .Rubber_options .options_list .options_list_title span,
+        .clip_options .options_list .options_list_title span {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        .basis_options .options_list .options_list_range_box,
+        .font_options .options_list .options_list_range_box,
+        .paint_options .options_list .options_list_range_box,
+        .Rubber_options .options_list .options_list_range_box,
+        .clip_options .options_list .options_list_range_box {
+            margin: 10px 0;
+        }
+
+        .font_options .options_list .options_list_title input[type=color],
+        .paint_options .options_list .options_list_title input[type=color],
+        .Rubber_options .options_list .options_list_title input[type=color] {
+            margin: 0;
+            width: 70px;
+            height: 30px;
+            display: inline-block;
+            vertical-align: middle;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 0 2px;
+            cursor: pointer;
+        }
+
+        .modal .modal_icon {
+            width: 85%;
+            height: 65px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .modal .modal_icon img {
+            display: inline-block;
+            width: 60px;
+            height: 100%;
+        }
+
+        .modal .modal_icon .modal-title {
+            text-align: center;
+            font-size: 20px;
+            color: rgb(216, 26, 96);
+            display: inline-block;
+            vertical-align: bottom;
+            font-weight: 600;
+        }
+
+        .modal .modal-body .open_file input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .modal .modal-body .open_file button {
+            width: 100%;
+            font-size: 15px;
+        }
+
+        #create_canvas {
+            width: 100%;
+            font-size: 15px;
+            background-color: rgb(216, 26, 96);
+            border-color: rgb(237, 67, 42);
+            color: #fff;
+        }
+
+        #create_canvas:hover {
+            background-color: rgb(200, 10, 96);
+            border-color: rgb(237, 67, 42);
+        }
+
+        .canvas_content_option {
+            padding: 5px 15px;
+            margin: 10px auto;
+        }
+
+        .canvas_content_option span {
+            font-size: 14px;
+            font-weight: 100;
+            font-family: initial;
+        }
+
+        .canvas_content_option input[type=tel] {
+            border: 1px solid #ccc;
+            width: auto;
+            height: 30px;
+            display: inline-block;
+            color: rgba(0, 0, 0, 0.7);
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+
+        .canvas_content_option input[type=color] {
+            border: 1px solid #ccc;
+            width: 70px;
+            height: 30px;
+            display: inline-block;
+            margin: 0 5px;
+            border-radius: 5px;
+            padding: 1px;
+            vertical-align: middle;
+        }
+
+        .model {
+            display: none;
+        }
+
+        .model.active {
+            display: block;
+        }
+
+        .options_list_title .options_list_title_box {
+            overflow: hidden;
+            list-style: none;
+            padding: 2px;
+            border: 1px solid #bbb;
+            margin-top: 5px;
+        }
+
+        .options_list_title .options_list_title_box li {
+            width: 16%;
+            height: 25px;
+            float: left;
+            border: 1px solid #ccc;
+            border-bottom: 1px solid #ccc !important;
+            cursor: pointer;
+            position: relative;
+            margin-right: 5px;
+        }
+
+        .options_list_title .options_list_title_box li:hover {
+            border: 1px solid rgb(216, 26, 96);
+            border-bottom: 1px solid rgb(216, 26, 96) !important;
+        }
+
+        .options_list_title .options_list_title_box li:first-of-type span {
+            width: 1px;
+            height: 100%;
+            position: absolute;
+            right: 51%;
+            top: 0;
+            transform: rotate(-45deg);
+            background: dodgerblue;
+        }
+
+        .options_list_title .options_list_title_box li:last-of-type span {
+            width: 90%;
+            height: 90%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            border: 1px solid dodgerblue;
+            border-radius: 50%;
+            transform: translate(-48%, -48%);
+        }
+
+        .options_list_title .options_list_title_box .controls.active {
+            width: 16%;
+            height: 25px;
+            float: left;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            position: relative;
+            margin-right: 5px;
+            border: 1px solid rgb(216, 26, 96);
+            border-bottom: 1px solid rgb(216, 26, 96) !important;
+        }
+    </style>
+</head>
+
+<body style="padding: 0;">
+    <!-- 导航栏 -->
+    <nav class="nav nav-default  icon_box_main">
+        <div class="icon_box_fa container">
+            <div class="icon_box">
+                <img src="../img/icon.png" alt="无法显示图片">
+            </div>
+            <span>在线制图工具</span>
+            <div class="nav_title">美化图片</div>
+            <div class="pull-right login_reg_box">
+                <ul>
+                    <li>
+                        <a href="<%= HTTP_ROOT%>/login">登录</a>
+                    </li>
+                    <li>
+                        <a href="<%= HTTP_ROOT%>/reg" target="_blank">注册</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 工具栏 -->
+    <header class="model_list_box">
+        <div class="container">
+            <div class="row">
+                <div class="pull-left">
+                    <ul class="options">
+                        <li>
+                            <button id='basis' class="btn btn-sm active">
+                                <i class="fa fa-sliders"></i>
+                                基础调整
+                                <!-- 修改画布尺寸 -->
+                            </button>
+                        </li>
+                        <li>
+                            <button id="font" class="btn btn-sm">
+                                <i class="fa fa-font"></i>
+                                插入文字
+                            </button>
+                        </li>
+                        <li>
+                            <button id="paint" class="btn btn-sm">
+                                <i class="fa fa-paint-brush"></i>
+                                画笔
+                                <!-- 调整画笔大小，颜色 -->
+                            </button>
+                        </li>
+                        <li>
+                            <button id="color_toggle" class="btn btn-sm">
+                                <input id="canvas-bg" type="color">
+                                <i class="fa fa-dashboard"></i>
+                                背景色调整
+                            </button>
+                        </li>
+                        <li>
+                            <button id="Rubber" class="btn btn-sm">
+                                <i class="fa fa-eraser"></i>
+                                橡皮檫
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="pull-right">
+                    <ul>
+                        <li>
+                            <button id="canvas-save" class="btn btn-success btn-sm">
+                                <i class="fa fa-file-image-o"></i>
+                                保存图片
+                            </button>
+                        </li>
+                        <li>
+                            <a href="" class="btn btn-danger btn-sm" onclick="return confirm('确认离开本页面？所有操作将失效')">
+                                <i class="fa fa-trash"></i> 放弃
+                            </a>
+                        </li>
+                        <li>
+                            <a href="tencent://message/?uin=104619660&Site=http://vps.shuidazhe.com&Menu=yes"
+                                target="_blank" class="btn btn-sm btn-info">
+                                <i class="fa fa-headphones"></i> 联系客服
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 选择画布模态框 -->
+    <div class="modal fade" data-backdrop='static' data-keyboard='false' data-show='true'
+        style="background: rgba(0,0,0,0.2);" id="init_modal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal_icon">
+                        <img src="../img/icon.png" alt="无法显示图片">
+                        <h3 class="modal-title">在线制图工具</h3>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="open_file" style="margin: 10px;position: relative;">
+                        <input type="file" id="img_link">
+                        <button id="open_img_file" class="btn btn-info" data-dismiss='modal'>
+                            <i class="fa fa-folder-open-o"></i>
+                            打开一张图片
+                        </button>
+                    </div>
+                    <div style="margin: 10px;">
+                        <button class="btn" data-target='#canvas_modal' data-toggle='modal' data-dismiss='modal'
+                            id="create_canvas">
+                            <i class="fa fa-file-image-o"></i>
+                            新建画布
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 画布初始化模态框 -->
+    <div class="modal fade" id="canvas_modal" data-backdrop='static' data-keyboard='false'>
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>新建画布</h4>
+                </div>
+                <div class="modal-body" style="position: relative;">
+                    <div id="tip" style="display: none;">
+                        <div class="alert alert-danger">
+                            <span></span>
+                            <button class="close close_tip">&times;</button>
+                        </div>
+                    </div>
+                    <div class="canvas_content_option">
+                        <span>宽度：</span>
+                        <input type="tel" id="canvas-width" type="tel" maxlength="4" autocomplete='off' pattern="[0-9]"
+                            value="700">
+                        <span>px</span>
+                    </div>
+                    <div class="canvas_content_option">
+                        <span>高度：</span>
+                        <input type="tel" id="canvas-height" type="tel" maxlength="4" autocomplete='off' pattern="[0-9]"
+                            value="700">
+                        <span>px</span>
+                    </div>
+                    <div class="canvas_content_option">
+                        <span>背景色：</span>
+                        <input type="color" id="canvas-bg-color" default-value="#FFFFFF">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="create_canvas_yes" class="btn btn-success" data-dismiss="modal">
+                        确认
+                    </button>
+                    <button class="btn btn-danger" data-target="#init_modal" data-toggle="modal"
+                        data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="main">
+        <div class="canvas_box">
+            <div id="canvas_router" style="position: relative;">
+            </div>
+        </div>
+    </section>
+
+    <!-- 画布选项栏  -->
+    <div class="picture_options">
+        <ul>
+            <li>
+                <button id="canvas_back" class="btn btn-sm">
+                    <i class="fa fa-reply"></i>
+                    撤回
+                </button>
+            </li>
+            <li>
+                <button id="canvas_clean" class="btn btn-sm">
+                    <i class="fa fa-share"></i>
+                    重做
+                </button>
+            </li>
+            <li id="clip_box">
+                <button id="canvas_clip" class="btn btn-sm">
+                    <i class="fa fa-file-image-o"></i>
+                    裁剪
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 基础编辑框 -->
+    <div class="basis_options model active">
+        <ul class="panel-group" style="margin-bottom: 0;">
+            <li id="basic_box">
+                <header>
+                    <a href="#basic" data-toggle="collapse" data-parent="#basic_box">
+                        基础调整
+                        <div class="toggle_icon panel-title">
+                            <i class="fa fa-angle-down" style="line-height: 30px;"></i>
+                        </div>
+                    </a>
+                </header>
+                <div id="basic" class="panel-collapse collapse in" style="margin: 10px;">
+                    <div class="options_list">
+                        <div class="options_list_title">
+                            <span class="pull-left">亮度</span>
+                            <span class="pull-right canvas_light">0</span>
+                        </div>
+                        <input style="transform: rotateZ(180deg);" id="canvas_brightness" class="options_list_range_box"
+                            type="range" min="1" max="10" value="10" step="1">
+                    </div>
+                    <div class="options_list">
+                        <div class="options_list_title">
+                            <span class="pull-left">控件</span>
+                        </div>
+                        <div class="options_list_title">
+                            <ul class="options_list_title_box">
+                                <li class="controls" id="The-path">
+                                    <span></span>
+                                </li>
+                                <li class="controls" id="The-article">
+                                    <span></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="options_list" style="text-align: center;margin-top: 10px;">
+                        <button class="btn btn-sm btn-success" style="padding: 5px 20px;">确认</button>
+                        <button id="cancel-active" class="btn btn-sm btn-danger close_basic_model"
+                            style="padding: 5px 20px;">取消</button>
+                    </div>
+                </div>
+            </li>
+
+            <li>
+                <header>
+                    <a href="#canvas_size" data-toggle="collapse" data-parent="#basic_box">
+                        修改尺寸
+                        <div class="toggle_icon">
+                            <i class="fa fa-angle-down" style="line-height: 30px;"></i>
+                        </div>
+                    </a>
+                </header>
+                <div id="canvas_size" class="panel-collapse collapse" style="margin: 10px;">
+                    <div class="options_list">
+                        <div class="options_list_title">
+                            <div class="pull-left clearfix"
+                                style="display: inline-block;width: 43%;text-align: center;">
+                                <span>宽度</span>
+                            </div>
+                            <div class="pull-right clearfix"
+                                style="display: inline-block;width: 43%;text-align: center;">
+                                <span>高度</span>
+                            </div>
+                        </div>
+                        <div class="options_list_title">
+                            <div style="display: inline-block;width: 43%;">
+                                <input id="modify_C_width" class="basis_options_size" type="tel" maxlength="4"
+                                    autocomplete='off' pattern="[0-9]">
+                            </div>
+                            <div style="display: inline-block;width: 9%;text-align: center;">
+                                <span
+                                    style="font-weight: 600;font-size: 18px;color: #ccc;line-height: 12px;">&times;</span>
+                            </div>
+                            <div style="display: inline-block;width: 43%;">
+                                <input id="modify_C_height" class="basis_options_size" type="tel" maxlength="4"
+                                    pattern="[0-9]">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="options_list" style="text-align: center;margin-top: 10px;">
+                        <button id="modify_C_WH_YES" class="btn btn-sm btn-success"
+                            style="padding: 5px 20px;">确认</button>
+                        <button id="modify_C_WH_NO" class="btn btn-sm btn-danger close_basic_model"
+                            style="padding: 5px 20px;">取消</button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 文字编辑框 -->
+    <div class="font_options model" style="padding-bottom: 10px;">
+        <header style="padding: 10px;margin-bottom: 10px;">
+            文字编辑框
+            <button class="close font_options_close" style="outline: none;">
+                <span>&times;</span>
+            </button>
+        </header>
+        <div class="options_list">
+            <div class="options_list_title">
+                <textarea class="form-control" id="canvas_text_input" cols="10" rows="3" style="resize: none;"
+                    placeholder="请输入文字"></textarea>
+            </div>
+        </div>
+        <div class="options_list">
+            <div class="options_list_title">
+                <span>颜色：</span>
+                <input id="canvas_text_color" type="color" value="#000000;">
+            </div>
+        </div>
+        <div class="options_list">
+            <div class="options_list_title">
+                <span class="pull-left">字体大小</span>
+                <span class="pull-right canvas_text_fontsize">14px</span>
+            </div>
+            <input id="canvas_text_width" class="options_list_range_box" type="range" min="9" max="30" value="14">
+        </div>
+        <div class="options_list">
+            <div class="options_list_title">
+                <span class="pull-left">旋转角度</span>
+                <span class="pull-right rotate_text">0deg</span>
+            </div>
+            <input id="canvas_text_rotate" class="options_list_range_box" type="range" min="0" max="360" value="0">
+        </div>
+        <div class="options_list" style="text-align: center;margin-top: 10px;">
+            <button id="canvas_text_YES" class="btn btn-sm btn-success" style="padding: 5px 20px;">确认</button>
+            <button id="canvas_text_NO" class="btn btn-sm btn-danger close_basic_model"
+                style="padding: 5px 20px;">取消</button>
+        </div>
+    </div>
+
+    <!-- 画笔编辑框 -->
+    <div class="paint_options model" style="padding-bottom: 10px;">
+        <header style="padding: 10px;margin-bottom: 10px;">
+            画笔
+            <button class="close font_options_close" style="outline: none;">
+                <span>&times;</span>
+            </button>
+        </header>
+        <div class="options_list">
+            <div class="options_list_title">
+                <span>颜色：</span>
+                <input id="canvas_paint_color" type="color">
+            </div>
+        </div>
+        <div class="options_list">
+            <div class="options_list_title">
+                <span class="pull-left">线条粗细</span>
+                <span class="pull-right line_width">1</span>
+            </div>
+            <input id="canvas_paint_line-width" class="options_list_range_box" type="range" min="1" max="15" value="1"
+                step="1">
+        </div>
+    </div>
+
+    <!-- 橡皮檫 -->
+    <div class="Rubber_options model" style="padding-bottom: 10px;">
+        <header style="padding: 10px;margin-bottom: 10px;">
+            橡皮檫
+            <button class="close font_options_close" style="outline: none;">
+                <span>&times;</span>
+            </button>
+        </header>
+        <div class="options_list">
+            <div class="options_list_title">
+                <span class="pull-left">粗细大小</span>
+                <span class="pull-right Rubber_width">1</span>
+            </div>
+            <input id="Rubber_width" class="options_list_range_box" type="range" min="1" max="20" value="1" step="1">
+        </div>
+    </div>
+
+    <!-- 裁剪选项框 -->
+    <div class="clip_options model" style="padding-bottom: 10px;">
+        <header style="padding: 10px;margin-bottom: 10px;">
+            裁剪
+            <button class="close font_options_close" style="outline: none;">
+                <span>&times;</span>
+            </button>
+        </header>
+        <div id="canvas_size" style="margin: 10px;">
+            <div class="options_list">
+                <div class="options_list_title">
+                    <div class="pull-left clearfix" style="display: inline-block;width: 43%;text-align: center;">
+                        <span>裁剪宽度：</span>
+                    </div>
+                    <div class="pull-right clearfix" style="display: inline-block;width: 43%;text-align: center;">
+                        <span>裁剪高度：</span>
+                    </div>
+                </div>
+                <div class="options_list_title">
+                    <div style="display: inline-block;width: 43%;">
+                        <input id="clip_C_width" class="basis_options_size" type="tel" maxlength="4" autocomplete='off'
+                            pattern="[0-9]" style="margin: 0;color: #ccc;border-bottom: 1px solid rgba(0,0,0,0.5);">
+                    </div>
+                    <div style="display: inline-block;width: 9%;text-align: center;">
+                        <span style="font-weight: 600;font-size: 18px;color: #ccc;line-height: 12px;">&times;</span>
+                    </div>
+                    <div style="display: inline-block;width: 43%;">
+                        <input id="clip_C_height" class="basis_options_size" type="tel" maxlength="4" pattern="[0-9]"
+                            style="margin: 0;color: #ccc;border-bottom: 1px solid rgba(0,0,0,0.5);">
+                    </div>
+                </div>
+            </div>
+            <div class="options_list" style="text-align: center;margin-top: 10px;">
+                <button id="clip_C_WH_YES" class="btn btn-sm btn-success" style="padding: 5px 20px;">确认</button>
+                <button id="clip_C_WH_NO" class="btn btn-sm btn-danger close_basic_model"
+                    style="padding: 5px 20px;">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 缩放选项栏 -->
+    <div class="plus_options">
+        <div class="show_narrows"></div>
+        <ul>
+            <li style="width: 100px;margin-left: 10px;">
+                <input id="snrPollInterval" type="range" min="10" max="100" step="10" value="10">
+            </li>
+            <li>
+                <button id='canvas_amplification' class="btn btn-sm">
+                    <i class="fa fa-search-plus"></i>
+                    放大
+                </button>
+            </li>
+        </ul>
+    </div>
+    <script src="../js/pricture.js"></script>
+</body>
+
+</html>

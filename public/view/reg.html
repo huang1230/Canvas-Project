@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>在线制图工具-注册</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <script src="../js/jquery-2.1.4.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <style>
+        body {
+            background: url(../img/bg.png) no-repeat;
+            background-size: cover;
+        }
+
+        .reg_birthday,
+        .reg_sex {
+            width: 100%;
+            height: 40px;
+            margin-top: 10px;
+        }
+
+        .reg_birthday span,
+        .reg_sex>span {
+            display: inline-block;
+            width: 50px;
+            height: 100%;
+            line-height: 40px;
+            text-align: left;
+            color: #777;
+        }
+
+        .reg_birthday input {
+            display: inline-block;
+            width: 83% !important;
+            height: 40px;
+            line-height: 40px;
+            border-bottom: 1px solid #ccc;
+            margin-top: 0 !important;
+            color: #777;
+            font-weight: 100;
+            font-size: 14px;
+        }
+
+        /*隐藏小三角形的默认样式*/
+        .reg_birthday input[type=date]::-webkit-inner-spin-button {
+            visibility: hidden;
+        }
+
+        .reg_sex_radio {
+            width: 83%;
+            height: 40px;
+            display: inline-block;
+            line-height: 40px;
+        }
+
+        .reg_sex .reg_sex_radio input {
+            width: 10px !important;
+            height: 10px;
+            margin: 0 !important;
+            line-height: 40px;
+            vertical-align: middle;
+        }
+
+        .reg_sex .reg_sex_radio span {
+            color: #777;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav nav-default  icon_box_main">
+        <div class="icon_box_fa container">
+            <div class="icon_box">
+                <img src="../img/icon.png" alt="无法显示图片">
+            </div>
+            <span>在线制图工具</span>
+            <div class="pull-right login_reg_box">
+                <ul>
+                    <li>
+                        <a href="<%= HTTP_ROOT%>/login">登录</a>
+                    </li>
+                    <li>
+                        <a href="<%= HTTP_ROOT%>/reg" target="_blank">注册</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="reg_main" style="height: 500px;">
+        <div class="container-fluid" style="box-sizing: content-box;">
+            <div class="row">
+                <p class="reg_main_header">
+                    <img src="../img/icon.png" alt="自行车销售商城">
+                    <span>用户注册</span>
+                </p>
+                <form action="/reg" method="POST" id="reg_box" onsubmit="return FormCheck('#reg_box')">
+                    <input type="text" placeholder="您的昵称" name='username'>
+                    <input type="password" placeholder="请输入密码" name='password'>
+                    <input type="email" placeholder="邮箱地址" name='email'>
+
+                    <div class="reg_birthday">
+                        <span>生日：</span>
+                        <input type="date" placeholder="您的生日" name='brithday'>
+                    </div>
+                    <input type="submit" id="user_reg" value="注册" style="margin-top: 20px;" />
+                </form>
+                <div class="back_login" style='text-align: center;'>
+                    <span style='font-size: 12px;color:#777;'>已有账号?
+                        <a href="/login" style='color:deepskyblue;'>
+                            去登录
+                        </a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

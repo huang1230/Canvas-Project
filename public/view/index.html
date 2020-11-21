@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>在线制图</title>
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="../js/jquery-2.1.4.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+</head>
+
+<body>
+    <nav class="nav nav-default  icon_box_main" style="border-bottom: 1px solid #fff;">
+        <div class="icon_box_fa container">
+            <div class="icon_box">
+                <img src="../img/icon.png" alt="无法显示图片">
+            </div>
+            <span>在线制图工具</span>
+            <div class="pull-right login_reg_box">
+                <ul>
+                    <li>
+                        <a href="/login">登录</a>
+                    </li>
+                    <li>
+                        <a href="/reg" target="_blank">注册</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="bg_box">
+        <img src="../img/banner_bg1.jpg" alt="无法显示图片" style="display: block;">
+        <img src="../img/banner_bg2.jpg" alt="无法显示图片">
+        <img src="../img/banner_bg3.jpg" alt="无法显示图片">
+    </div>
+    <script>
+        window.onload = function () {
+            let i = 0
+            setInterval(() => {
+                if(i >= 3){
+                    i = 0
+                }
+                $($('.bg_box img')[i]).siblings().stop().fadeOut()
+                $($('.bg_box img')[i]).stop().fadeIn()
+                i ++ 
+            }, 3500);
+        }
+    </script>
+    <section class="container banner_box">
+        <div class="banner_box_list">
+            <p>在线制图工具</p>
+
+            <div class="banner_box_list_content">
+                <ul class="row">
+                    <li class="col-md-3 col-md-offset-3">
+                        <i class="fa fa-picture-o"></i>
+                        <span>制图</span>
+                    </li>
+                    <li class="col-md-3">
+                        <i class="fa fa-puzzle-piece"></i>
+                        <span>拼图</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <footer class="footer container">
+        <p>为了防范电信网络诈骗，如网民接到120电话，请立即接听</p>
+        <p style='margin-bottom: 0px;'>Copyright ©20xx-2020 自行车销售商城 xICP备xxxxxx号-x ICP证书: 沪xx-xxxxxx</p>
+    </footer>
+</body>
+
+</html>
